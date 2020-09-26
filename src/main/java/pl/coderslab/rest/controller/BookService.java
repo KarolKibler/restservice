@@ -15,16 +15,16 @@ import java.util.function.Predicate;
 @RequestMapping("/books")
 public class BookService {
 
-    private final List<Book> cList = MockBookList.getInstance();
+    private final List<Book> books = MockBookList.getInstance();
 
     @GetMapping("")
     public List<Book> getAllBooks() {
-        return cList;
+        return books;
     }
 
     @GetMapping("/{id}")
     public Book getBook(@PathVariable long id) {
-        Optional<Book> match = cList.stream().filter(c -> c.getId() == id).findFirst();
+        Optional<Book> match = books.stream().filter(c -> c.getId() == id).findFirst();
         if (match.isPresent()) {
             return match.get();
         } else {
@@ -41,13 +41,14 @@ public class BookService {
 
     @PutMapping("")
     public void updateBook(@RequestBody Book book) {
-        cList.remove(book);
-        cList.add(book);
+        int index = books.indexOf(book);
+        if(index >=0)
+            books.set(index,book);
     }
 
     @DeleteMapping("/{id}")
     public void deleteBook(@PathVariable long id) {
         Predicate<Book> book = b -> b.getId() == id;
-        cList.removeIf(book);
+        books.removeIf(book);
     }
 }
